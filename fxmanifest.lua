@@ -16,7 +16,5 @@ server_scripts {
 }
 
 shared_scripts {
-    '@BetterSky/ai_module_fg-obfuscated.lua',
-    '@BetterSky/shared_fg-obfuscated.lua',
     'config/config.lua'
 }
