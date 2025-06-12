@@ -191,7 +191,7 @@ Use `exports['RiseV-CarImprovements']:<ExportName>(...)` to call from other scri
 
 ## 📝 License
 
-This project is open-source. Feel free to modify and distribute under your own license.
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
