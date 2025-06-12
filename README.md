@@ -1,9 +1,3 @@
-**Überlegen der Codeblock-Formatierung**
-
-Der Benutzer möchte, dass der gesamte README in einem einzigen Codeblock dargestellt wird
-
-Nachgedacht für ein paar Sekunden
-
 ```markdown
 # RiseV Car Improvements
 
