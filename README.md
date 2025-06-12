@@ -3,278 +3,198 @@
 
 **Version:** 1.0.0  
 **Author:** RiseV – Trayx & Freakz  
-**Description:** A comprehensive FiveM script to enhance vehicle interactions in GTA V / FiveM servers. Features include locking/unlocking, lockpicking, cleaning, repairs, blinkers, windows, engine control, seatbelts, cruise control, door control, and autopilot.
-
----
-
-## 📋 Table of Contents
-
-- [Features](#-features)  
-- [Requirements](#-requirements)  
-- [Installation](#-installation)  
-- [Configuration](#-configuration)  
-- [Commands & Key Mappings](#-commands--key-mappings)  
-- [Exports](#-exports)  
-- [Events](#-events)  
-- [Notifications](#-notifications)  
-- [Contributing](#-contributing)  
-- [License](#-license)  
-
----
-
-## 🔥 Features
-
-1. **Lock System**  
-   - Toggle lock/unlock on nearby vehicles  
-   - Lock cooldown and animation  
-   - Horn & light effects on lock/unlock  
-   - Configurable excluded vehicle classes  
-
-2. **Lockpick System**  
-   - Chance-based lockpicking  
-   - Lockpick item consumption  
-   - Lockpick animation & honk effects  
-   - Lockpick cooldown and success rate  
-
-3. **Cleaning System**  
-   - Use a sponge item to clean vehicles  
-   - Configurable cleaning distance, animation, and duration  
-
-4. **Repair Kit System**  
-   - Use a repair kit item to fix vehicles  
-   - Configurable repair distance, animation, and duration  
-
-5. **Indicator Lights**  
-   - Left/right blinkers and hazards  
-   - Key mappings for easy control  
-   - Network sync for all players  
-
-6. **Window Controls**  
-   - Roll windows up/down individually  
-   - Key mappings for each window  
-
-7. **Engine Toggle**  
-   - Turn engine on/off  
-   - Configurable key mapping  
-
-8. **Seatbelt System** *(Optional)*  
-   - Eject player on high-speed crash if not buckled  
-   - Configurable speed threshold and multiplier  
-
-9. **Cruise Control** *(Optional)*  
-   - Maintain current speed  
-   - Auto-disable on brake/acceleration or airborne  
-
-10. **Door Control** *(Optional)*  
-    - Open/close individual doors, hood, and trunk  
-
-11. **Autopilot** *(Optional)*  
-    - Auto-drive to waypoint  
-    - Configurable driving style and max speed  
+**Description:**  
+A comprehensive FiveM script that enhances vehicle interactions in GTA V. Adds advanced lock/unlock, lockpicking, cleaning, repairing, blinkers, window controls, engine toggle, seatbelt ejection, cruise control, door control, and autopilot features—all fully configurable via `config.lua`.
 
 ---
 
 ## ⚙️ Requirements
 
-- **FiveM** server with `fxserver`  
-- **ESX Framework** (`es_extended` resource)  
-- **BetterSky** AI module dependency (provided in fxmanifest)  
-- **oxmysql** or compatible MySQL library for ownership checks  
+- FiveM server (≥ FXServer `cerulean`)
+- **ESX** framework (`es_extended`)
+- **oxmysql** for database queries
+- **BetterSky** modules (included via `shared_scripts`)
 
 ---
 
-## 🚀 Installation
+## 📦 Installation
 
-1. **Clone or download** this resource into your `resources` folder:
-   ```bash
-   resources/[local]/risev-car-improvements
+1. Place the `RiseV-CarImprovements` folder in your server’s `resources` directory.
+2. Add the following to your `server.cfg`:
+   ```cfg
+   ensure RiseV-CarImprovements
    ```
-2. **Add** to your `server.cfg`:
-   ```
-   ensure risev-car-improvements
-   ```
-3. **Restart** your server or use `refresh` + `ensure risev-car-improvements`.
+3. Restart your server or run `refresh` + `ensure RiseV-CarImprovements`.
 
 ---
 
-## ⚙️ Configuration
+## 📂 Resource Structure
 
-All settings live in `config/config.lua`. Key sections:
-
-```lua
-Config.Debugging = true
 ```
-
-### Lock System (`Config.LockSystemSettings`)
-- `toggleLock` – description & key (default `U`)  
-- `VehicleDetectionDistance` – meters  
-- `LockExcludedVehicleClasses` – array of class IDs (e.g., `{13}` for planes)  
-- `EffectsOnLock` – horn & light effects  
-- `lockCooldown` – seconds  
-- `LockpickSuccessRate` – 0–100%  
-- `LockpickDuration` – seconds  
-- `LockpickHonkDuration` – seconds  
-- `LockpickCooldown` – seconds  
-- `LockpickItem` & `requiredItemCount`  
-- Animations: `LockpickAnimationDict/Name`, `LockToggleAnimationDict/Name`
-
-### Cleaning System (`Config.CleaningSettings`)
-- `CleaningItem`, `requiredItemCount`  
-- `VehicleDetectionDistance`  
-- `CleaningAnimation` (scenario)  
-- `CleaningDuration` (seconds)
-
-### Repair Kit System (`Config.RepairkitSettings`)
-- `RepairkitItem`, `requiredItemCount`  
-- `VehicleDetectionDistance`  
-- `RepairingAnimation` (scenario)  
-- `RepairingTime` (seconds)
-
-### Engine Control (`Config.EngineControlSettings`)
-- `toggleKey` – description & key (default `M`)  
-- Master switch: `Config.TurnOnOffEngine`
-
-### Indicator Lights (`Config.IndicatorKeyMappings`)
-- `toggleLeftBlinker`, `toggleRightBlinker`, `toggleHazardLights`  
-- Each with `description` & `key`
-
-### Window Controls (`Config.WindowKeyMappings`)
-- `toggleWindowLeft`, `toggleWindowRight`, `toggleWindowRearLeft`, `toggleWindowRearRight`  
-- Each with `description` & `key`
-
-### Seatbelt System (`Config.SeatbeltSettings`)
-- `FlyOutOnCrashIfNotBuckledUp`  
-- `FlySpeedMultiplicator`  
-- `MinCrashSpeedKMH`  
-- `toggleKey` – description & key (default `B`)  
-- `IgnoreFragileObjects`
-
-### Cruise Control (`Config.CruiseControlSettings`)
-- `toggleCruiseControl` – description & key (default `Z`)  
-- `maxAirTime`, `maxSpeedKMH`, `cooldown`
-
-### Door Control (`Config.DoorControlSettings`)
-- `toggleFrontLeftDoor`, `toggleFrontRightDoor`, `toggleRearLeftDoor`, `toggleRearRightDoor`, `toggleTrunk`, `toggleHood`  
-- Each with `description` & `key`
-
-### Autopilot (`Config.AutoPilotSettings`)
-- `toggleAutoPilot` – description & key (default `L`)  
-- `cooldown`, `drivingStyleFlags`, `maxSpeedKMH`
-
-### Notification Settings (`Config.NotificationSettings`)
-- **Server** & **Client** services: call patterns  
-- Templates per key (title, text, type, duration)
-
----
-
-## ⌨️ Commands & Key Mappings
-
-| Feature             | Command           | Default Key | Description                    |
-|---------------------|-------------------|-------------|--------------------------------|
-| Lock/Unlock         | `toggleLock`      | `U`         | Lock or unlock nearest vehicle |
-| Lockpick            | *(auto via item)* | —           | Requires `lockpick` item       |
-| Clean Vehicle       | *(auto via item)* | —           | Requires `sponge` item         |
-| Repair Vehicle      | *(auto via item)* | —           | Requires `repairkit` item      |
-| Left Blinker        | `toggleLeftBlinker`   | `←`       | Toggle left indicator          |
-| Right Blinker       | `toggleRightBlinker`  | `→`       | Toggle right indicator         |
-| Hazard Lights       | `toggleHazardLights`  | `↑`       | Toggle hazard lights           |
-| Toggle Window Left  | `toggleWindowLeft`    | `1`       | Roll left window up/down       |
-| Toggle Window Right | `toggleWindowRight`   | `2`       | Roll right window up/down      |
-| Toggle Window R.Left| `toggleWindowRearLeft`| `3`       | Roll rear-left window          |
-| Toggle Window R.Right| `toggleWindowRearRight`| `4`      | Roll rear-right window         |
-| Toggle Engine       | `toggleEngine`       | `M`       | Turn engine on/off             |
-| Toggle Seatbelt     | `toggleSeatbelt`     | `B`       | Buckle/unbuckle seatbelt       |
-| Toggle Cruise Control| `toggleCruise`      | `Z`       | Activate/deactivate cruise     |
-| Toggle Door (FL)    | `toggleFrontLeftDoor` | `5`       | Open/close front-left door     |
-| Toggle Door (FR)    | `toggleFrontRightDoor`| `6`       | Open/close front-right door    |
-| Toggle Door (RL)    | `toggleRearLeftDoor`  | `7`       | Open/close rear-left door      |
-| Toggle Door (RR)    | `toggleRearRightDoor` | `8`       | Open/close rear-right door     |
-| Toggle Trunk        | `toggleTrunk`         | `9`       | Open/close trunk               |
-| Toggle Hood         | `toggleHood`          | `0`       | Open/close hood                |
-| Toggle Autopilot    | `toggleAutoPilot`     | `L`       | Start/stop autopilot to waypoint |
-
----
-
-## 🧩 Exports
-
-### Server Exports
-```lua
-ToggleLock(playerId, netId, plate)
-GetLockState(netId) → bool
-ConsumeLockpick(playerId)
-ForceUnlock(playerId, netId)
-CleanVehicle(playerId)
-RepairVehicle(playerId)
-SyncBlinker(netId, state)
-TurnOffComponents(playerId, netId)
-```
-
-### Client Exports
-```lua
-ToggleLock()
-AttemptLockpick()
-ToggleBlinker()
-ToggleWindow()
-ToggleDoor()
-ToggleEngine()
-ToggleSeatbelt()
-ToggleCruise()
-ToggleAutoPilot()
-CleanVehicle()
-UseRepairkit()
-TurnOffComponents()
+RiseV-CarImprovements/
+├── fxmanifest.lua
+├── config/
+│   └── config.lua
+├── server/
+│   └── server.lua
+└── client/
+    └── client.lua
 ```
 
 ---
 
-## 📡 Events
+## 🔧 Configuration
+
+All settings are in **`config/config.lua`**. Key sections:
+
+| Section                      | Description                                                      |
+|------------------------------|------------------------------------------------------------------|
+| `Debugging`                  | Toggle debug prints (`true` / `false`).                         |
+| **Lock System**              | Enable/disable locks, lockpick rates, cooldowns, keybinds, etc.  |
+| **Cleaning System**          | Enable/disable vehicle cleaning, required item, animation, time. |
+| **Repairkit System**         | Enable/disable repair feature, item, animation, time.            |
+| **Engine Toggle**            | Enable/disable engine on/off, keybind.                           |
+| **Indicator Lights**         | Enable blinkers/hazard lights, key mappings.                    |
+| **Window Controls**          | Enable roll-up/down windows, key mappings.                      |
+| **Seatbelt System**          | Eject on crash if unbuckled, speed thresholds, toggle key.      |
+| **Cruise Control**           | Enable cruise, max speed, cooldown, toggle key.                 |
+| **Door Control**             | Enable individual door open/close, key mappings.                |
+| **Autopilot**                | Enable autopilot, driving style, max speed, cooldown.           |
+| **Notification Settings**    | Customize server/client notification templates and services.     |
+
+> **Tip:** Carefully adjust distances, durations, and cooldowns to suit your server’s pace.
+
+---
+
+## 🚀 Features
+
+1. **Lock & Unlock**  
+   - Automatic initial locking based on vehicle class.  
+   - Keypress (`U` by default) or `/toggleLock` command.  
+   - Horn/light effects on lock/unlock.  
+   - Lock cooldown and anti-spam.
+
+2. **Lockpicking**  
+   - Usable item (`lockpick`) with configurable success rate.  
+   - Animated pick, honking alarm, item consumption on break/success.
+
+3. **Cleaning**  
+   - Usable item (`sponge`).  
+   - Scenario animation and dirt-level reset.
+
+4. **Repair**  
+   - Usable item (`repairkit`).  
+   - Scenario animation and full vehicle fix.
+
+5. **Indicator Lights**  
+   - Left, right, and hazard signals.  
+   - Configurable key mappings (`←`, `→`, `↑`).
+
+6. **Window Controls**  
+   - Roll windows up/down individually.  
+   - Four window keybinds (`1`–`4` by default).
+
+7. **Engine Toggle**  
+   - Start/stop engine with key (`M`).
+
+8. **Seatbelt System**  
+   - Toggle seatbelt (`B`).  
+   - Eject player on high-speed crash if unbuckled.
+
+9. **Cruise Control**  
+   - Toggle cruise (`Z`).  
+   - Maintains speed until brake/accelerate.
+
+10. **Door Control**  
+    - Open/close front/rear doors, trunk, hood (`5`–`0`).
+
+11. **Autopilot**  
+    - `/toggleAutoPilot` or `L` key when a waypoint is set.  
+    - Vehicle drives to waypoint with adjustable driving style and speed.
+
+---
+
+## 📡 Exports
+
+### Server-Side
+
+- `ToggleLock(playerId, netId, plate)`
+- `GetLockState(netId) → bool`
+- `ConsumeLockpick(playerId)`
+- `ForceUnlock(playerId, netId)`
+- `CleanVehicle(playerId)`
+- `RepairVehicle(playerId)`
+- `SyncBlinker(netId, state)`
+- `TurnOffComponents(playerId, netId)`
+
+### Client-Side
+
+- `ToggleLock()`  
+- `AttemptLockpick()`  
+- `ToggleBlinker()`  
+- `ToggleWindow()`  
+- `ToggleDoor()`  
+- `ToggleEngine()`  
+- `ToggleSeatbelt()`  
+- `ToggleCruise()`  
+- `ToggleAutoPilot()`  
+- `CleanVehicle()`  
+- `UseRepairkit()`  
+- `TurnOffComponents()`
+
+Use `exports['RiseV-CarImprovements']:<ExportName>(...)` to call from other scripts.
+
+---
+
+## 🔔 Events
 
 ### Server Events
-- `Car-Improvements:server:toggleLock`  
-- `Car-Improvements:server:getLockState`  
-- `Car-Improvements:server:useLockpickItem`  
-- `Car-Improvements:server:consumeLockpick`  
-- `Car-Improvements:server:lockpickVehicle`  
-- `Car-Improvements:server:cleanComplete`  
-- `Car-Improvements:server:notify(playerId, key)`  
-- and more under the `Car-Improvements:server:*` namespace.
+
+| Event                                             | Payload                            | Description                                          |
+|---------------------------------------------------|------------------------------------|------------------------------------------------------|
+| `Car-Improvements:server:notify`                  | `(playerId, key)`                  | Internal notification hook.                          |
+| `Car-Improvements:server:isAuthorized`            | `(playerId, plate, allowed)`       | Ownership/job check result.                          |
+| `Car-Improvements:server:entityCreated`           | `(entity, netId, plate)`           | When a new vehicle spawns.                           |
+| `Car-Improvements:server:initialLockState`        | `(netId, isLocked)`                | After initial lock setup.                           |
+| `Car-Improvements:server:toggleLock`              | `(playerId, netId, isLocked)`      | On lock/unlock action.                               |
+| `Car-Improvements:server:lockpickVehicle`         | `(playerId, netId)`                | On successful lockpick.                              |
+| `Car-Improvements:server:consumeLockpick`         | `(playerId)`                       | When lockpick item is used up.                       |
+| `Car-Improvements:server:cleanComplete`           | `(playerId)`                       | After cleaning finishes.                             |
+| `Car-Improvements:server:repairkitRemove`         | `(playerId)`                       | After repairkit item is consumed.                    |
+| `Car-Improvements:server:syncBlinker`             | `(netId, blinkerState)`            | Blinker sync broadcast.                              |
+| `Car-Improvements:server:turnOffVehicleComponents`| `(playerId, netId)`                | Turn off engine/neon/radio etc.                      |
+| `Car-Improvements:server:entityRemoved`           | `(entity, netId)`                  | Cleanup when vehicle despawns.                       |
 
 ### Client Events
-- `Car-Improvements:client:toggleLock`  
-- `Car-Improvements:client:notify(key)`  
-- `Car-Improvements:client:toggleBlinker`  
-- `Car-Improvements:client:turnOffComponents`  
-- `Car-Improvements:client:toggleEngine`  
-- `Car-Improvements:client:toggleSeatbelt`  
-- `Car-Improvements:client:toggleCruise`  
-- `Car-Improvements:client:toggleAutoPilot`  
-- and more under the `Car-Improvements:client:*` namespace.
 
-Use these to hook into or extend the script’s behavior.
-
----
-
-## 🔔 Notifications
-
-All user notifications use the `RiP-Notify` resource by default. You can swap to any notification system by editing the `Config.NotificationSettings` service strings.
-
----
-
-## 🤝 Contributing
-
-1. Fork this repository.  
-2. Create a feature branch: `git checkout -b feature-name`.  
-3. Commit your changes: `git commit -m "Add new feature"`.  
-4. Push to the branch: `git push origin feature-name`.  
-5. Open a Pull Request.
-
-Please adhere to the existing code style and include clear commit messages.
+| Event                                     | Payload                   | Description                                  |
+|-------------------------------------------|---------------------------|----------------------------------------------|
+| `Car-Improvements:client:notify`          | `(key)`                   | Internal notification hook.                  |
+| `Car-Improvements:client:toggleBlinker`   | `(side, left, right, hz)` | When blinkers change.                        |
+| `Car-Improvements:clean`                  | `()`                      | Trigger cleaning animation.                  |
+| `Car-Improvements:useRepairkit`           | `()`                      | Trigger repair animation.                    |
+| `Car-Improvements:syncBlinker`            | `(netId, state)`          | Update lights on clients.                    |
+| `Car-Improvements:turnOffVehicleComponents`| `(netId)`                | Client-side component shutdown.              |
+| `Car-Improvements:requestVehicleClass`    | `(netId)`                 | Ask server for vehicle class.                |
+| `Car-Improvements:initialLockState`       | `(netId, isLocked)`       | Apply initial door lock.                     |
+| `Car-Improvements:updateLockState`        | `(netId, isLocked)`       | Apply lock/unlock on client.                 |
+| `Car-Improvements:vehicleHonk`            | `(netId)`                 | Honk loop on lockpick.                       |
+| `Car-Improvements:client:toggleLock`      | `(netId, plate)`          | After user presses lock key.                 |
+| `Car-Improvements:client:attempt`         | `()`                      | Start lockpick process.                      |
+| `Car-Improvements:client:toggleEngine`    | `(state)`                 | After engine toggle.                         |
+| `Car-Improvements:client:toggleSeatbelt`  | `(state)`                 | Seatbelt on/off.                             |
+| `Car-Improvements:client:toggleCruise`    | `(state)`                 | Cruise engaged/disengaged.                   |
+| `Car-Improvements:client:toggleDoor`      | `(idx)`                   | Open/close specific door.                    |
+| `Car-Improvements:client:toggleAutoPilot` | `(state)`                 | Autopilot on/off.                            |
 
 ---
 
-## 📄 License
+## 📝 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is open-source. Feel free to modify and distribute under your own license.
 
 ---
+
+> **Enjoy enhanced vehicular realism on your server with RiseV Car Improvements!**  
+> Questions or feedback? Reach out to **Trayx** & **Freakz** on our Discord.  
 ```
