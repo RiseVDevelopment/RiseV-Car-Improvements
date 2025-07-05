@@ -4,7 +4,7 @@ Config = {}
 -- ////////////////////////////
 -- // General Settings
 -- // Debugging: Enable or disable debug output. Set to true to print debug messages via dbg().
-Config.Debugging = true
+Config.Debugging = false
 
 -- ////////////////////////////
 -- // Lock System Settings
